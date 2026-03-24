@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de IMC | Projeto Virada 28 Dias</title>
+  <meta name="description" content="Calcule seu IMC gratuitamente e receba dicas personalizadas. Projeto Virada 28 Dias.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="bg-glow g1"></div>
+  <div class="bg-glow g2"></div>
+
+  <div class="app">
+
+    <!-- HEADER -->
+    <header class="header">
+      <img src="assets/logo.png" alt="Projeto Virada 28 Dias" class="logo-img">
+      <h1>Calcule seu<br><span class="fire">IMC completo</span></h1>
+      <p class="subtitle">Preencha seus dados e descubra seu Índice de Massa Corporal com dicas personalizadas</p>
+    </header>
+
+    <!-- ===== FORMULÁRIO ===== -->
+    <div class="screen visible" id="screenForm">
+
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">📊</span> Dados essenciais</div>
+
+        <div class="field">
+          <label>Sexo biológico</label>
+          <div class="selector cols-2">
+            <button class="sel-btn active" data-field="sexo" data-val="F" onclick="sel(this)"><span class="sel-icon">♀</span> Feminino</button>
+            <button class="sel-btn" data-field="sexo" data-val="M" onclick="sel(this)"><span class="sel-icon">♂</span> Masculino</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Idade</label>
+          <div class="input-box">
+            <input type="number" id="idade" placeholder="28" min="10" max="100" inputmode="numeric">
+            <span class="suffix">anos</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Altura</label>
+          <div class="input-box">
+            <input type="number" id="altura" placeholder="1.65 ou 165" step="0.01" min="0.5" max="250" inputmode="decimal">
+            <span class="suffix">m</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Peso atual</label>
+          <div class="input-box">
+            <input type="number" id="peso" placeholder="70.0" step="0.1" min="20" max="300" inputmode="decimal">
+            <span class="suffix">kg</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Perguntas opcionais -->
+      <button class="accordion-toggle" id="accToggle" onclick="toggleAccordion()">
+        <span>🎯 Quer um resultado mais completo?</span>
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span class="tag">Opcional</span>
+          <span class="arrow">▼</span>
+        </span>
+      </button>
+      <div class="accordion-body" id="accBody">
+        <div class="accordion-inner">
+
+          <div class="field">
+            <label>Quantas vezes na semana você vai pra academia?</label>
+            <div class="selector cols-3">
+              <button class="sel-btn" data-field="atividade" data-val="sedentario" onclick="sel(this)"><span class="sel-icon">🚫</span> Nenhuma</button>
+              <button class="sel-btn" data-field="atividade" data-val="leve" onclick="sel(this)"><span class="sel-icon">1️⃣</span> 1–2x</button>
+              <button class="sel-btn" data-field="atividade" data-val="moderado" onclick="sel(this)"><span class="sel-icon">3️⃣</span> 3–4x</button>
+              <button class="sel-btn" data-field="atividade" data-val="intenso" onclick="sel(this)"><span class="sel-icon">5️⃣</span> 5–6x</button>
+              <button class="sel-btn" data-field="atividade" data-val="atleta" onclick="sel(this)"><span class="sel-icon">💪</span> Todo dia</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Principal objetivo</label>
+            <div class="selector cols-2">
+              <button class="sel-btn" data-field="objetivo" data-val="emagrecer" onclick="sel(this)"><span class="sel-icon">⬇️</span> Emagrecer</button>
+              <button class="sel-btn" data-field="objetivo" data-val="manter" onclick="sel(this)"><span class="sel-icon">⚖️</span> Manter peso</button>
+              <button class="sel-btn" data-field="objetivo" data-val="massa" onclick="sel(this)"><span class="sel-icon">💪</span> Ganhar massa</button>
+              <button class="sel-btn" data-field="objetivo" data-val="saude" onclick="sel(this)"><span class="sel-icon">❤️</span> Mais saúde</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Refeições por dia</label>
+            <div class="selector cols-3">
+              <button class="sel-btn" data-field="refeicoes" data-val="1-2" onclick="sel(this)"><span class="sel-icon">🍽️</span> 1–2</button>
+              <button class="sel-btn" data-field="refeicoes" data-val="3-4" onclick="sel(this)"><span class="sel-icon">🥗</span> 3–4</button>
+              <button class="sel-btn" data-field="refeicoes" data-val="5+" onclick="sel(this)"><span class="sel-icon">🥑</span> 5+</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Consumo de água</label>
+            <div class="selector cols-3">
+              <button class="sel-btn" data-field="agua" data-val="pouca" onclick="sel(this)"><span class="sel-icon">💧</span> &lt;1L</button>
+              <button class="sel-btn" data-field="agua" data-val="media" onclick="sel(this)"><span class="sel-icon">💧💧</span> 1–2L</button>
+              <button class="sel-btn" data-field="agua" data-val="boa" onclick="sel(this)"><span class="sel-icon">🌊</span> &gt;2L</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Qualidade do sono</label>
+            <div class="selector cols-3">
+              <button class="sel-btn" data-field="sono" data-val="ruim" onclick="sel(this)"><span class="sel-icon">😵</span> Ruim</button>
+              <button class="sel-btn" data-field="sono" data-val="regular" onclick="sel(this)"><span class="sel-icon">😐</span> Regular</button>
+              <button class="sel-btn" data-field="sono" data-val="bom" onclick="sel(this)"><span class="sel-icon">😴</span> Bom</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="calcular()">🔥 Calcular meu IMC</button>
+    </div>
+
+    <!-- ===== RESULTADO ===== -->
+    <div class="screen" id="screenResult">
+
+      <!-- Ring Gauge -->
+      <div class="result-ring-card">
+        <div class="glow" id="ringGlow"></div>
+        <div class="ring-container">
+          <svg class="ring-svg" viewBox="0 0 200 200">
+            <circle class="ring-track" cx="100" cy="100" r="88" stroke-dasharray="395 560" stroke-dashoffset="0" />
+            <circle class="ring-fill" id="ringFill" cx="100" cy="100" r="88" stroke-dasharray="0 560" stroke-dashoffset="0" />
+          </svg>
+          <div class="ring-center">
+            <div class="rc-number count-up" id="rcNumber">--</div>
+            <div class="rc-label">IMC</div>
+            <div class="rc-cat" id="rcCat">—</div>
+          </div>
+        </div>
+        <div class="linear-gauge">
+          <div class="lg-track">
+            <div class="lg-thumb" id="lgThumb" style="left:30%"></div>
+          </div>
+          <div class="lg-labels">
+            <span>16</span><span>18.5</span><span>25</span><span>30</span><span>35</span><span>40+</span>
+          </div>
+        </div>
+        <div class="zone-legend">
+          <div class="zone-item" data-zone="abaixo"><span class="z-dot" style="background:var(--blue)"></span>Abaixo</div>
+          <div class="zone-item" data-zone="normal"><span class="z-dot" style="background:var(--green)"></span>Normal</div>
+          <div class="zone-item" data-zone="sobrepeso"><span class="z-dot" style="background:var(--yellow)"></span>Sobrepeso</div>
+          <div class="zone-item" data-zone="obeso"><span class="z-dot" style="background:var(--red)"></span>Obeso</div>
+        </div>
+      </div>
+
+      <!-- Estatísticas -->
+      <div class="stats-grid">
+        <div class="stat-card"><div class="sc-label">Peso ideal</div><div class="sc-value" id="resPesoIdeal">--</div><div class="sc-sub" id="resPesoIdealSub"></div></div>
+        <div class="stat-card"><div class="sc-label">Meta sugerida</div><div class="sc-value" id="resMeta">--</div><div class="sc-sub" id="resMetaSub"></div></div>
+      </div>
+      <div class="stats-grid" id="statsGridExtra" style="display:none;">
+        <div class="stat-card"><div class="sc-label">TMB estimada</div><div class="sc-value" id="resTMB">--</div><div class="sc-sub">kcal/dia em repouso</div></div>
+        <div class="stat-card"><div class="sc-label">Gasto calórico</div><div class="sc-value" id="resGasto">--</div><div class="sc-sub">kcal/dia estimado</div></div>
+      </div>
+
+      <!-- Perfil completo -->
+      <div class="profile-summary" id="profileCard" style="display:none;">
+        <h3>📋 Seu perfil completo</h3>
+        <div id="profileRows"></div>
+      </div>
+
+      <!-- Dicas -->
+      <div class="tips-card">
+        <h3>💡 Dicas personalizadas</h3>
+        <div id="tipsContent"></div>
+      </div>
+
+      <!-- Motivação -->
+      <div class="moti-banner">
+        <div class="mb-emoji">🔥</div>
+        <div class="mb-text" id="motiText">Sua transformação começa aqui!</div>
+        <div class="mb-handle">@projetovirada28dias</div>
+      </div>
+
+      <!-- Tabela de referência -->
+      <div class="imc-ref">
+        <h3>Tabela de referência</h3>
+        <div class="ref-row" id="ref-abaixo"><span class="rr-cat"><span class="rr-dot" style="background:var(--blue)"></span> Abaixo do peso</span><span class="rr-range">&lt; 18.5</span></div>
+        <div class="ref-row" id="ref-normal"><span class="rr-cat"><span class="rr-dot" style="background:var(--green)"></span> Peso normal</span><span class="rr-range">18.5 – 24.9</span></div>
+        <div class="ref-row" id="ref-sobrepeso"><span class="rr-cat"><span class="rr-dot" style="background:var(--yellow)"></span> Sobrepeso</span><span class="rr-range">25.0 – 29.9</span></div>
+        <div class="ref-row" id="ref-obes1"><span class="rr-cat"><span class="rr-dot" style="background:var(--primary)"></span> Obesidade I</span><span class="rr-range">30.0 – 34.9</span></div>
+        <div class="ref-row" id="ref-obes2"><span class="rr-cat"><span class="rr-dot" style="background:var(--red)"></span> Obesidade II</span><span class="rr-range">35.0 – 39.9</span></div>
+        <div class="ref-row" id="ref-obes3"><span class="rr-cat"><span class="rr-dot" style="background:#AA1122"></span> Obesidade III</span><span class="rr-range">≥ 40.0</span></div>
+      </div>
+
+      <button class="btn-primary" onclick="recalcular()">↻ Calcular novamente</button>
+
+      <footer class="footer">
+        <a href="https://www.instagram.com/projetovirada28dias" target="_blank" class="footer-insta">📸 @projetovirada28dias</a>
+        <p class="disc">O IMC é uma referência geral e não substitui avaliação médica ou nutricional.<br>Consulte sempre um profissional de saúde.</p>
+      </footer>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
