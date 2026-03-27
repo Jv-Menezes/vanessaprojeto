@@ -115,20 +115,7 @@ function calcular() {
     z.classList.toggle('active-zone', z.dataset.zone === zoneKey);
   });
 
-  // Peso ideal
-  const piMin = Math.round(18.5 * altura * altura);
-  const piMax = Math.round(24.9 * altura * altura);
-  document.getElementById('resPesoIdeal').textContent = piMin + '–' + piMax;
-  document.getElementById('resPesoIdealSub').textContent = 'kg (faixa saudável)';
 
-  // Meta
-  const piMid = Math.round((piMin + piMax) / 2);
-  const diff = Math.round(peso - piMid);
-  const metaEl = document.getElementById('resMeta');
-  const metaSubEl = document.getElementById('resMetaSub');
-  if (Math.abs(diff) <= 2) { metaEl.textContent = '✓ No alvo'; metaEl.style.color = 'var(--green)'; metaSubEl.textContent = 'Você está ótimo(a)!'; }
-  else if (diff > 0) { metaEl.textContent = '-' + diff + ' kg'; metaEl.style.color = 'var(--primary)'; metaSubEl.textContent = 'para o centro da faixa ideal'; }
-  else { metaEl.textContent = '+' + Math.abs(diff) + ' kg'; metaEl.style.color = 'var(--blue)'; metaSubEl.textContent = 'para o centro da faixa ideal'; }
 
   // Stats extras
   const extraGrid = document.getElementById('statsGridExtra');
@@ -179,8 +166,7 @@ function calcular() {
   } else if (cat === 'normal') {
     tips.push({ icon: '💚', bg: 'var(--green-dim)', text: '<strong>Parabéns, peso saudável!</strong> Continue com bons hábitos. Foque em qualidade de vida, força e energia no dia a dia.' });
   } else {
-    const def = Math.round(gasto * 0.15);
-    tips.push({ icon: '🎯', bg: 'var(--primary-glow)', text: `<strong>Déficit calórico sugerido:</strong> tente ~${Math.round(gasto - def)} kcal/dia (redução de ${def} kcal). Perda gradual e sustentável.` });
+
   }
 
   if (state.atividade === 'sedentario') tips.push({ icon: '🚶', bg: 'var(--yellow-dim)', text: '<strong>Você não vai pra academia?</strong> Comece com 30 min de caminhada diária. Nos 28 dias, tente incluir pelo menos 2–3 treinos por semana.' });
@@ -199,11 +185,16 @@ function calcular() {
   if (!extras) {
     tips.push({ icon: '🎯', bg: 'var(--yellow-dim)', text: '<strong>Quer dicas mais detalhadas?</strong> Volte e preencha as perguntas opcionais para receber orientações sobre alimentação, água, sono e treino.' });
   }
+  tips.push({ icon: '🎯', bg: 'var(--primary-glow)', text: '<strong>Consulte dicas personalizadas clicando aqui</strong>', isDriveLink: true });
   tips.push({ icon: '📱', bg: 'var(--primary-glow)', text: '<strong>Dica de ouro:</strong> siga @projetovirada28dias no Instagram para treinos, receitas e motivação diária!' });
 
-  document.getElementById('tipsContent').innerHTML = tips.map(t =>
-    `<div class="tip-item"><div class="tip-icon" style="background:${t.bg}">${t.icon}</div><div class="tip-text">${t.text}</div></div>`
-  ).join('');
+  const DRIVE_URL = 'https://drive.google.com/drive/folders/1VduZwOIP7DYjRzGDWG2lh1VFKBg1qUyM?usp=drive_link';
+  document.getElementById('tipsContent').innerHTML = tips.map(t => {
+    if (t.isDriveLink) {
+      return `<div class="tip-item"><div class="tip-icon" style="background:${t.bg}">${t.icon}</div><div class="tip-text"><a href="${DRIVE_URL}" target="_blank" rel="noopener" class="btn-dicas"><span class="icon">📂</span>${t.text.replace(/<\/?strong>/g,'')}</a></div></div>`;
+    }
+    return `<div class="tip-item"><div class="tip-icon" style="background:${t.bg}">${t.icon}</div><div class="tip-text">${t.text}</div></div>`;
+  }).join('');
 
   // Motivação
   const motis = {

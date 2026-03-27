@@ -64,9 +64,10 @@ body {
 .header { text-align:center; margin-bottom:36px; animation:fadeIn .7s ease; }
 
 .logo-img {
-  width: 200px;
+  width: 240px;
   height: auto;
   margin-bottom: 20px;
+  mix-blend-mode: lighten;
   filter: drop-shadow(0 4px 20px rgba(214,36,110,0.3));
   animation: logoFloat 3s ease-in-out infinite;
 }
@@ -382,3 +383,21 @@ body {
   .sel-btn { padding:12px 6px; font-size:10px; }
   .sel-btn .sel-icon { font-size:18px; }
 }
+
+/* === LINK DICAS === */
+.btn-dicas {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:14px 20px;
+  background:linear-gradient(135deg,rgba(214,36,110,0.12),rgba(255,107,157,0.08));
+  border:1.5px solid rgba(214,36,110,0.35); border-radius:var(--radius-sm);
+  color:var(--primary-light); font-family:'Syne',sans-serif;
+  font-size:14px; font-weight:700; letter-spacing:.3px;
+  text-decoration:none; cursor:pointer;
+  transition:all .3s ease; margin-top:4px;
+}
+.btn-dicas:hover {
+  background:linear-gradient(135deg,rgba(214,36,110,0.22),rgba(255,107,157,0.14));
+  border-color:var(--primary); color:var(--text-1);
+  transform:translateY(-2px); box-shadow:0 6px 24px rgba(214,36,110,0.2);
+}
+.btn-dicas span.icon { font-size:18px; }
