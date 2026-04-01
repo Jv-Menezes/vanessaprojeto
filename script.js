@@ -12,6 +12,8 @@ const state = {
   sono: null
 };
 
+let lastTMB = 0;
+
 // Seletor de opções
 function sel(btn) {
   state[btn.dataset.field] = btn.dataset.val;
@@ -115,17 +117,35 @@ function calcular() {
     z.classList.toggle('active-zone', z.dataset.zone === zoneKey);
   });
 
+  // Peso ideal
+  const piMin = Math.round(18.5 * altura * altura);
+  const piMax = Math.round(24.9 * altura * altura);
+  document.getElementById('resPesoIdeal').textContent = piMin + '–' + piMax;
+  document.getElementById('resPesoIdealSub').textContent = 'kg (faixa saudável)';
 
+  // Meta
+  const piMid = Math.round((piMin + piMax) / 2);
+  const diff = Math.round(peso - piMid);
+  const metaEl = document.getElementById('resMeta');
+  const metaSubEl = document.getElementById('resMetaSub');
+  if (Math.abs(diff) <= 2) { metaEl.textContent = '✓ No alvo'; metaEl.style.color = 'var(--green)'; metaSubEl.textContent = 'Você está ótimo(a)!'; }
+  else if (diff > 0) { metaEl.textContent = '-' + diff + ' kg'; metaEl.style.color = 'var(--primary)'; metaSubEl.textContent = 'para o centro da faixa ideal'; }
+  else { metaEl.textContent = '+' + Math.abs(diff) + ' kg'; metaEl.style.color = 'var(--blue)'; metaSubEl.textContent = 'para o centro da faixa ideal'; }
 
   // Stats extras
   const extraGrid = document.getElementById('statsGridExtra');
   const profileCard = document.getElementById('profileCard');
+  const avalGrid = document.getElementById('statsGridAval');
+  lastTMB = Math.round(tmb);
+
   if (extras && state.atividade) {
     extraGrid.style.display = 'grid';
     document.getElementById('resTMB').textContent = Math.round(tmb);
     document.getElementById('resGasto').textContent = Math.round(gasto);
+    avalGrid.style.display = 'grid';
   } else {
     extraGrid.style.display = 'none';
+    avalGrid.style.display = 'grid';
   }
 
   // Perfil
@@ -166,7 +186,8 @@ function calcular() {
   } else if (cat === 'normal') {
     tips.push({ icon: '💚', bg: 'var(--green-dim)', text: '<strong>Parabéns, peso saudável!</strong> Continue com bons hábitos. Foque em qualidade de vida, força e energia no dia a dia.' });
   } else {
-
+    const def = Math.round(gasto * 0.15);
+    tips.push({ icon: '🎯', bg: 'var(--primary-glow)', text: `<strong>Déficit calórico sugerido:</strong> tente ~${Math.round(gasto - def)} kcal/dia (redução de ${def} kcal). Perda gradual e sustentável.` });
   }
 
   if (state.atividade === 'sedentario') tips.push({ icon: '🚶', bg: 'var(--yellow-dim)', text: '<strong>Você não vai pra academia?</strong> Comece com 30 min de caminhada diária. Nos 28 dias, tente incluir pelo menos 2–3 treinos por semana.' });
@@ -185,16 +206,11 @@ function calcular() {
   if (!extras) {
     tips.push({ icon: '🎯', bg: 'var(--yellow-dim)', text: '<strong>Quer dicas mais detalhadas?</strong> Volte e preencha as perguntas opcionais para receber orientações sobre alimentação, água, sono e treino.' });
   }
-  tips.push({ icon: '🎯', bg: 'var(--primary-glow)', text: '<strong>Consulte dicas personalizadas clicando aqui</strong>', isDriveLink: true });
   tips.push({ icon: '📱', bg: 'var(--primary-glow)', text: '<strong>Dica de ouro:</strong> siga @projetovirada28dias no Instagram para treinos, receitas e motivação diária!' });
 
-  const DRIVE_URL = 'https://drive.google.com/drive/folders/1VduZwOIP7DYjRzGDWG2lh1VFKBg1qUyM?usp=drive_link';
-  document.getElementById('tipsContent').innerHTML = tips.map(t => {
-    if (t.isDriveLink) {
-      return `<div class="tip-item"><div class="tip-icon" style="background:${t.bg}">${t.icon}</div><div class="tip-text"><a href="${DRIVE_URL}" target="_blank" rel="noopener" class="btn-dicas"><span class="icon">📂</span>${t.text.replace(/<\/?strong>/g,'')}</a></div></div>`;
-    }
-    return `<div class="tip-item"><div class="tip-icon" style="background:${t.bg}">${t.icon}</div><div class="tip-text">${t.text}</div></div>`;
-  }).join('');
+  document.getElementById('tipsContent').innerHTML = tips.map(t =>
+    `<div class="tip-item"><div class="tip-icon" style="background:${t.bg}">${t.icon}</div><div class="tip-text">${t.text}</div></div>`
+  ).join('');
 
   // Motivação
   const motis = {
@@ -206,6 +222,9 @@ function calcular() {
     obes3: 'A jornada mais importante é a que começa agora. Com acompanhamento e dedicação, você vai se surpreender. ' + emoji
   };
   document.getElementById('motiText').textContent = motis[cat];
+
+  // Auto-abrir modal de avaliação calórica
+  setTimeout(() => abrirModal(), 900);
 }
 
 // Animação de contagem
@@ -230,6 +249,29 @@ function recalcular() {
   document.getElementById('screenForm').classList.add('visible');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// ===== MODAL AVALIAÇÃO CALÓRICA =====
+function abrirModal() {
+  document.getElementById('modalTMB').textContent = lastTMB;
+  document.getElementById('modalValor').textContent = lastTMB;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// Fechar modal clicando fora
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
+
+// Fechar com Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') fecharModal();
+});
 
 // Enter para calcular
 document.querySelectorAll('#screenForm input[type="number"]').forEach(inp => {
